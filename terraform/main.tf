@@ -33,10 +33,10 @@ resource "aws_cloudwatch_log_group" "log_group" {
 
 resource "aws_iam_role" "lambda_execution_role" {
   assume_role_policy = jsonencode({
-    Version = "2012-10-17",
+    Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow",
+        Effect = "Allow"
         Principal = {
           Service = "lambda.amazonaws.com"
         }
@@ -53,12 +53,12 @@ resource "aws_iam_role_policy" "allow_ecs_service_update" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
+        Effect   = "Allow"
         Action   = "ecs:UpdateService"
         Resource = "*"
-      }
+      },
       {
-        "Effect" = "Allow",
+        "Effect" = "Allow"
         "Action" = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
@@ -78,7 +78,7 @@ resource "aws_iam_role_policy" "allow_sns_topic_notification" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
+        Effect   = "Allow"
         Action   = "sns:Publish"
         Resource = var.sns_topic_to_notify_on_failure
       }
@@ -101,7 +101,7 @@ resource "aws_sns_topic_policy" "sns_topic_policy" {
   arn = aws_sns_topic.sns_topic.arn
 
   policy = jsonencode({
-    "Version" = "2012-10-17",
+    "Version" = "2012-10-17"
     "Statement" = [
       {
         "Effect" = "Allow"
