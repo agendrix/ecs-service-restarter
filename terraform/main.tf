@@ -57,6 +57,15 @@ resource "aws_iam_role_policy" "allow_ecs_service_update" {
         Action   = "ecs:UpdateService"
         Resource = "*"
       }
+      {
+        "Effect" = "Allow",
+        "Action" = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource" = aws_cloudwatch_log_group.log_group.arn
+      }
     ]
   })
 }
