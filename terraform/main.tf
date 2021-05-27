@@ -26,6 +26,11 @@ resource "aws_lambda_function" "lambda" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
+  retention_in_days = 7
+}
+
 resource "aws_iam_role" "lambda_execution_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
