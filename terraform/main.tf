@@ -78,7 +78,7 @@ resource "aws_iam_role_policy" "allow_sns_topic_notification" {
 }
 
 resource "aws_sns_topic" "sns_topic" {
-  name = aws_lambda_function.lambda.name
+  name = aws_lambda_function.lambda.function_name
   policy = jsonencode({
     "Version" = "2012-10-17",
     "Statement" = [{
