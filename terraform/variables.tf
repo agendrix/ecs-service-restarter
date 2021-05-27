@@ -1,21 +1,5 @@
-variable "lambda_name" {
-  description = "Lambda function name"
+variable "sns_topic_to_notify_on_failure" {
+  description = "Arn of the sns topic to notify on lambda invocation failure."
   type        = string
-}
-
-variable "timeout" {
-  description = "Lambda timeout"
-  type        = number
-  default     = 3
-}
-
-variable "memory_size" {
-  description = "Lambda memory size"
-  type        = number
-  default     = 128
-}
-
-variable "role_arn" {
-  description = "Lambda IAM role"
-  type        = string
+  default     = null
 }
