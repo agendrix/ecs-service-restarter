@@ -13,7 +13,7 @@ resource "aws_lambda_function" "lambda" {
 
   environment {
     variables = {
-      REGION       = data.aws_region.current.name
+      REGION       = var.region
     }
   }
 
@@ -25,8 +25,6 @@ resource "aws_lambda_function" "lambda" {
     }
   }
 }
-
-data "aws_region" "current" {}
 
 resource "aws_iam_role" "lambda_execution_role" {
   assume_role_policy = jsonencode({
@@ -76,6 +74,18 @@ resource "aws_iam_role_policy" "allow_sns_topic_notification" {
 
 resource "aws_sns_topic" "sns_topic" {
   name = "ecs-service-restarter"
+  policy = jsonencode({
+    "Effect" = "Allow",
+    "Principal" = {
+      "Service" = "cloudwatch.amazonaws.com"
+    },
+    "Action"= "sns:Publish",
+    "Condition"= {
+      "ArnLike"= {
+        "aws:SourceArn": "arn:aws:cloudwatch:*:${var.account_id}:*"
+      }
+    }
+  })
 }
 
 resource "aws_sns_topic_subscription" "sns_topic" {
