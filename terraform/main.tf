@@ -86,19 +86,26 @@ resource "aws_sns_topic_policy" "sns_topic_policy" {
 
   policy = jsonencode({
     "Version" = "2012-10-17",
-    "Statement" = [{
-      "Effect" = "Allow",
-      "Principal" = {
-        "Service" = "cloudwatch.amazonaws.com"
-      },
-      "Resource": aws_sns_topic.sns_topic.arn,
-      "Action"= "SNS:Publish",
-      "Condition"= {
-        "ArnLike"= {
-          "aws:SourceArn": "arn:aws:cloudwatch:*:${var.account_id}:*"
+    "Statement" = [
+      {
+        "Effect" = "Allow"
+        "Principal" = {
+          "Service" = "cloudwatch.amazonaws.com"
+        },
+        "Resource" = aws_sns_topic.sns_topic.arn
+        "Action" = "SNS:Publish"
+        "Condition" = {
+          "ArnLike" = {
+            "aws:SourceArn": "arn:aws:cloudwatch:*:${var.account_id}:*"
+          }
         }
+      },
+      {
+        "Effect" = "Allow"
+        "Action" = "lambda:InvokeFunction"
+        "Resource" = aws_lambda_function.lambda.arn
       }
-    }]
+    ]
   })
 }
 
