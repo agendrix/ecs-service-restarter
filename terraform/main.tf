@@ -64,7 +64,7 @@ resource "aws_iam_role_policy" "allow_ecs_service_update" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource" = aws_cloudwatch_log_group.log_group.arn
+        "Resource" = "${aws_cloudwatch_log_group.log_group.arn}/*"
       }
     ]
   })
