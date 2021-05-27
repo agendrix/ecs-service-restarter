@@ -77,6 +77,13 @@ resource "aws_iam_role_policy" "allow_sns_topic_notification" {
   })
 }
 
+resource "aws_lambda_permission" "allow_invocation_from_sns" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.sns_topic.arn
+}
+
 resource "aws_sns_topic" "sns_topic" {
   name = aws_lambda_function.lambda.function_name
 }
@@ -99,11 +106,6 @@ resource "aws_sns_topic_policy" "sns_topic_policy" {
             "aws:SourceArn": "arn:aws:cloudwatch:*:${var.account_id}:*"
           }
         }
-      },
-      {
-        "Effect" = "Allow"
-        "Action" = "lambda:InvokeFunction"
-        "Resource" = aws_lambda_function.lambda.arn
       }
     ]
   })
