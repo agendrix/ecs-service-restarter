@@ -7,6 +7,9 @@ const handler: SNSHandler = async (event: SNSEvent) => {
     const alarmPayload = fetchAlarmPayload(event);
     if (alarmPayload.NewStateValue !== "ALARM") return;
 
+    // TODO: Delete
+    console.log(JSON.stringify(event));
+
     const client = new ECSClient({ region: process.env.REGION });
     const input: UpdateServiceCommandInput = formatCommandInput(event);
     console.log(`Roll restart request received for service: ${input.service} in cluster: ${input.cluster}`);
