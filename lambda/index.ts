@@ -4,11 +4,11 @@ import { SNSEvent } from "aws-lambda"
 
 const handler: SNSHandler = async (event: SNSEvent) => {
   try {
-    const alarmPayload = fetchAlarmPayload(event);
-    if (alarmPayload.NewStateValue !== "ALARM") return;
-
     // TODO: Delete
     console.log(JSON.stringify(event));
+
+    const alarmPayload = fetchAlarmPayload(event);
+    if (alarmPayload.NewStateValue !== "ALARM") return;
 
     const client = new ECSClient({ region: process.env.REGION });
     const input: UpdateServiceCommandInput = formatCommandInput(event);
