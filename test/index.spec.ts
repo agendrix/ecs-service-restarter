@@ -1,51 +1,39 @@
 import assert from "assert";
+import { SNSEvent } from "aws-lambda";
+import { CloudWatchAlarm } from "../lambda/types";
+import { fetchAlarmPayload, formatCommandInput } from "../lambda/utils";
+import { PAYLOAD, FORMATTED_PAYLOAD } from "./mocks";
+import { cloneDeep } from "lodash"
 
-import "./mocks";
+describe("fetchAlarmPayload", () => {
+  it("should return an object when the payload is valid", () => {
+    const payload = fetchAlarmPayload(PAYLOAD as SNSEvent);
+    assert.ok(payload); 
+  })
 
-import { __test__ } from "../lambda/index";
-import { S3 } from "aws-sdk";
-import { MOCKED_BUCKETS, MOCKED_OWNER } from "./mocks/libs/aws-sdk";
-import { postRequest } from "./helpers/post-request";
+  it("should throw if the event format is not valid", () => {
+    const invalidPayload = cloneDeep(PAYLOAD)
+    invalidPayload.Records.shift();
+    assert.throws(() => (fetchAlarmPayload(invalidPayload)));
+  })
+});
 
-const handler = __test__.handler;
+describe("formatCommandInput", () => {
+  it("should return an object when the payload is valid", () => {
+    const commandInput = formatCommandInput(FORMATTED_PAYLOAD as CloudWatchAlarm);
+    assert.ok(commandInput); 
+  })
 
-const LAMBDA_URL = process.env.LAMBDA_URL;
+  it("should throw if the payload format is not valid", () => {
+    const invalidPayload = cloneDeep(FORMATTED_PAYLOAD) as any;
+    delete invalidPayload.Trigger.Dimensions 
+    assert.throws(() => (formatCommandInput(invalidPayload)));
+  })
 
-if (LAMBDA_URL !== undefined) {
-  /* Integration tests with the deployed lambda */
-  describe("lambda POST call", () => {
-    it("returns 200 with Hello World", async () => {
-      const response = await postRequest(LAMBDA_URL, {});
 
-      assert.strictEqual(response.statusCode, 200);
-      assert.strictEqual(response.headers?.["content-type"], "application/json");
-    });
-  });
-} else {
-  /* Local tests */
-  describe("exports.handler", () => {
-    const fakeEvent: any = {};
-    const fakeContext: any = {};
-
-    it("returns 200 with Hello World", async () => {
-      const response = await handler(fakeEvent, fakeContext);
-
-      assert.strictEqual(response.statusCode, 200);
-      assert.strictEqual(response.headers?.["content-type"], "application/json");
-      assert.strictEqual(JSON.parse(response.body || "").text, "Hello World");
-    });
-
-    it("returns a list of S3 buckets", async () => {
-      const response = await handler(fakeEvent, fakeContext);
-      const listBucketsOutput: S3.ListBucketsOutput = JSON.parse(response.body || "").listBuckets;
-
-      assert.strictEqual(response.statusCode, 200);
-      assert.strictEqual(response.headers?.["content-type"], "application/json");
-      assert.strictEqual(listBucketsOutput.Owner?.DisplayName, MOCKED_OWNER);
-      assert.deepStrictEqual(
-        listBucketsOutput.Buckets?.map(b => b.Name),
-        MOCKED_BUCKETS
-      );
-    });
-  });
-}
+  it("should throw if service or cluster is undefined", () => {
+    const invalidPayload = cloneDeep(FORMATTED_PAYLOAD);
+    invalidPayload.Trigger.Dimensions.shift();
+    assert.throws(() => (formatCommandInput(invalidPayload)));
+  })
+});
