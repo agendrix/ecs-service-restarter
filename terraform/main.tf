@@ -46,7 +46,7 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 }
 
-resource "aws_iam_role_policy" "allow_ecs_service_update" {
+resource "aws_iam_role_policy" "lamdba_iam_policy" {
   role = aws_iam_role.lambda_execution_role.id
 
   policy = jsonencode({
