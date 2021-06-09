@@ -1,7 +1,7 @@
 import assert from "assert";
 import { SNSEvent } from "aws-lambda";
 import { CloudWatchAlarm } from "../lambda/types";
-import { fetchAlarmPayload, formatCommandInput } from "../lambda/utils";
+import { fetchAlarmPayload, formatRollRestartCommand } from "../lambda/utils";
 import { PAYLOAD, FORMATTED_PAYLOAD } from "./mocks";
 import { cloneDeep } from "lodash"
 
@@ -20,20 +20,20 @@ describe("fetchAlarmPayload", () => {
 
 describe("formatCommandInput", () => {
   it("should return an object when the payload is valid", () => {
-    const commandInput = formatCommandInput(FORMATTED_PAYLOAD as CloudWatchAlarm);
+    const commandInput = formatRollRestartCommand(FORMATTED_PAYLOAD as CloudWatchAlarm);
     assert.ok(commandInput); 
   })
 
   it("should throw if the payload format is not valid", () => {
     const invalidPayload = cloneDeep(FORMATTED_PAYLOAD) as any;
     delete invalidPayload.Trigger.Dimensions 
-    assert.throws(() => (formatCommandInput(invalidPayload)));
+    assert.throws(() => (formatRollRestartCommand(invalidPayload)));
   })
 
 
   it("should throw if service or cluster is undefined", () => {
     const invalidPayload = cloneDeep(FORMATTED_PAYLOAD);
     invalidPayload.Trigger.Dimensions.shift();
-    assert.throws(() => (formatCommandInput(invalidPayload)));
+    assert.throws(() => (formatRollRestartCommand(invalidPayload)));
   })
 });

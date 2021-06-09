@@ -1,13 +1,13 @@
 import { SNSHandler, SNSEvent } from "aws-lambda";
 import { ECSClient, UpdateServiceCommand, UpdateServiceCommandInput, } from "@aws-sdk/client-ecs";
-import { fetchAlarmPayload, fetchPrimaryDeployment, formatCommandInput, validateIsInAlarmState } from "./utils";
+import { fetchAlarmPayload, fetchPrimaryDeployment, formatRollRestartCommand, validateIsInAlarmState } from "./utils";
 
 const handler: SNSHandler = async (event: SNSEvent) => {
   try {
     const alarmPayload = fetchAlarmPayload(event);
     validateIsInAlarmState(alarmPayload);
     const client = new ECSClient({ region: process.env.REGION });
-    const input: UpdateServiceCommandInput = formatCommandInput(alarmPayload);
+    const input: UpdateServiceCommandInput = formatRollRestartCommand(alarmPayload);
     console.log(`Roll restart request received for service: ${input.service} in cluster: ${input.cluster}`);
     const command = new UpdateServiceCommand(input);
     const { service } = await client.send(command);

@@ -11,7 +11,7 @@ export function fetchAlarmPayload(event: SNSEvent) {
   }
 }
 
-export function formatCommandInput(payload: CloudWatchAlarm): UpdateServiceCommandInput {
+export function formatRollRestartCommand(payload: CloudWatchAlarm): UpdateServiceCommandInput {
   const metricDimensions = payload.Trigger?.Dimensions;
   if (metricDimensions) {
     const cluster: string | undefined = metricDimensions.find(d => d.name === EcsServiceMetricDimensions.CLUSTER_NAME)?.value;
