@@ -28,7 +28,7 @@ export function fetchPrimaryDeployment(service: Service | undefined): Deployment
   return service?.deployments?.find(d => d.status === DeploymentStatus.PRIMARY);
 }
 
-export function validateAlarmState(payload: CloudWatchAlarm)   {
+export function validateIsInAlarmState(payload: CloudWatchAlarm)   {
   if (payload.NewStateValue !== CloudWatchAlarmState.ALARM) {
     throw new Error("This lambda function should only be called when a CloudWatch alarm is transitioning to the ALARM state.");
   }
